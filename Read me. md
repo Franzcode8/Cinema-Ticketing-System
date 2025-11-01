@@ -1,0 +1,145 @@
+# Cinema-Ticketing-System
+A quick code for making a system that inputs user data and display afterwards
+
+//@Code ni Alonzo Francis Faisal, syempre
+
+import java.util.Scanner;  // for getting user input
+
+public class CinemaTicketSystem {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);   // scanner para kuhaon ang input sa user
+
+        final double BASE_PRICE = 200.0;          // base price sa ticket
+        String day;                               // para sa day of the week
+
+        System.out.println("=== Welcome to the Cinema Ticketing System ===");
+
+        while (true) {   // loop ni siya para sa daghang customers
+            System.out.print("\nEnter customer's age (or type 'exit' to quit): ");
+            String ageInput = input.nextLine();   // kuhaon ang age nga gi-input
+
+            // kung gusto na mu-exit ang user
+            if (ageInput.equalsIgnoreCase("exit")) {
+                System.out.println("\nThank you for using the Cinema Ticketing System!");
+                break;
+            }
+
+            int age;  // diri nato i-store ang age nga number
+            try {
+                age = Integer.parseInt(ageInput);  // i-convert nato ang input nga string to number
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid age input. Please enter a number.");
+                continue;
+            }
+
+            System.out.print("Enter day of the week: ");
+            day = input.nextLine().trim();   // kuhaon ug limpyohan ang input day
+
+            System.out.print("Enter number of tickets: ");
+            int numTickets;
+            try {
+                numTickets = Integer.parseInt(input.nextLine());  // convert ticket input to number
+                if (numTickets <= 0) {
+                    System.out.println("Number of tickets must be greater than 0.");
+                    continue;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid ticket number input. Please enter a number.");
+                continue;
+            }
+
+            double discount = 0;             // para sa discount per ticket
+            double ticketPrice = BASE_PRICE; // base price sa ticket
+            String discountApplied = "None"; // para makita kung unsa nga discount gi-apply
+
+            // check kung asa nga discount applicable
+            if (age < 7) {   // kung below 7 years old, libre
+                ticketPrice = 0;
+                discountApplied = "Free for age below 7";
+            } 
+            else if (day.equalsIgnoreCase("Wednesday")) {  // kung Wednesday, naa’y 50% discount
+                discount = BASE_PRICE * 0.5;
+                ticketPrice = BASE_PRICE - discount;
+                discountApplied = "Wednesday 50% Discount";
+            } 
+            else if (age >= 60) {  // kung senior citizen, 20% discount
+                discount = BASE_PRICE * 0.2;
+                ticketPrice = BASE_PRICE - discount;
+                discountApplied = "Senior Citizen 20% Discount";
+            }
+
+            double total = ticketPrice * numTickets;  // total before extra discount
+            double extraDiscount = 0;                 // para sa extra discount kung lapas 1000
+            double finalAmount = total;               // final nga amount human sa tanan discount
+
+            // kung lapas 1000, naa pa’y 10% extra discount
+            if (total > 1000) {
+                extraDiscount = total * 0.1;
+                finalAmount = total - extraDiscount;
+                discountApplied += " + 10% Extra Discount (₱1000+)";
+            } 
+            else if (total < 200 && ticketPrice > 0) {
+                System.out.println("\nMinimum purchase not reached.");
+            }
+
+            // pangayo sa bayad sa customer
+            System.out.print("Enter cash paid by the customer: ₱");
+            double cashPaid;
+            try {
+                cashPaid = Double.parseDouble(input.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid amount.");
+                continue;
+            }
+
+            double change = cashPaid - finalAmount;  // i-compute ang sukli or kulang
+
+            // ======= RECEIPT PART =======
+            System.out.println("\n==================================================");
+            System.out.println("                  ALONZO CINEMA                   ");
+            System.out.println("            Davao City, Philippines, 8000         ");
+            System.out.println("               OFFICIAL MOVIE RECEIPT             ");
+            System.out.println("==================================================");
+            System.out.println("Date: " + java.time.LocalDate.now());
+            System.out.println("Day: " + day);
+            System.out.println("--------------------------------------------------");
+            System.out.println("Number of Tickets: " + numTickets);
+            System.out.println("Base Ticket Price: ₱" + BASE_PRICE);
+
+            if (discount > 0) {
+                System.out.println("Discount per Ticket: -₱" + discount);
+            } 
+            else if (ticketPrice == 0) {
+                System.out.println("Discount per Ticket: FREE");
+            }
+
+            System.out.println("Final Ticket Price: ₱" + ticketPrice);
+            System.out.println("Discount Applied: " + discountApplied);
+            System.out.println("--------------------------------------------------");
+            System.out.println("Subtotal: ₱" + total);
+
+            if (extraDiscount > 0) {
+                System.out.println("Extra 10% Discount: -₱" + extraDiscount);
+            }
+
+            System.out.println("--------------------------------------------------");
+            System.out.println("Total Amount Due: ₱" + finalAmount);
+            System.out.println("Cash Paid: ₱" + cashPaid);
+
+            if (change < 0) {
+                System.out.println("Balance Due: ₱" + Math.abs(change));
+            } 
+            else {
+                System.out.println("Change: ₱" + change);
+            }
+
+            System.out.println("==================================================");
+            System.out.println("          THANK YOU FOR YOUR PURCHASE!            ");
+            System.out.println("     Enjoy your movie and have a great day! 🍿     ");
+            System.out.println("==================================================\n");
+            // ======= END OF RECEIPT =======
+        }
+
+        input.close();  // close nato ang scanner after tanan transaction
+    }
+}
